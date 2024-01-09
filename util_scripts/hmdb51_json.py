@@ -45,7 +45,6 @@ def get_labels(csv_dir_path):
         labels.append('_'.join(file_path.name.split('_')[:-2]))
     return sorted(list(set(labels)))
 
-
 def convert_hmdb51_csv_to_json(csv_dir_path, split_index, video_dir_path,
                                dst_json_path):
     labels = get_labels(csv_dir_path)

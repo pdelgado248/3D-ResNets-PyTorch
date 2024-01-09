@@ -386,7 +386,9 @@ def main_worker(index, opt):
                         opt.device, current_lr, train_logger,
                         train_batch_logger, tb_writer, opt.distributed)
 
+            print('PARAMETERS: ',i,opt.checkpoint,(i%opt.checkpoint),opt.is_master_node)
             if i % opt.checkpoint == 0 and opt.is_master_node:
+                print('SAVING')
                 save_file_path = opt.result_path / 'save_{}.pth'.format(i)
                 save_checkpoint(save_file_path, i, opt.arch, model, optimizer,
                                 scheduler)

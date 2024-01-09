@@ -64,13 +64,44 @@ def evaluate(ground_truth_path, result_path, subset, top_k, ignore):
     ground_truth = remove_nonexistent_ground_truth(ground_truth, result)
     if ignore:
         n_ground_truth = len(ground_truth)
-
+            
     print('calculate top-{} accuracy'.format(top_k))
-    correct = [1 if line[1] in result[line[0]] else 0 for line in ground_truth]
-    accuracy = sum(correct) / n_ground_truth
+
+
+    if args.otherMeasures is True:
+
+        #print('ground_truth:')
+        #print(ground_truth)
+        #print('result:')
+        #print(result)
+        
+        #[print('Ground truth: ',line[1],'\tResult: ',result[line[0]]) for line in ground_truth]
+        #In our case 0 is abnormal, 1 is normal. Positive values are the abnormal and negative the normal.
+        truePos = sum([1 if (line[1] == 0) and (result[line[0]][0] == 0) else 0 for line in ground_truth])
+        trueNeg = sum([1 if (line[1] == 1) and (result[line[0]][0] == 1) else 0 for line in ground_truth])
+        falsePos = sum([1 if (line[1] == 0) and (result[line[0]][0] == 1) else 0 for line in ground_truth])
+        falseNeg = sum([1 if (line[1] == 1) and (result[line[0]][0] == 0) else 0 for line in ground_truth])
+        print('truePos: ',truePos)
+        print('trueNeg: ',trueNeg)
+        print('falsePos: ',falsePos)
+        print('falseNeg: ',falseNeg)
+
+        accuracy = (truePos+trueNeg)/(truePos + trueNeg +falsePos + falseNeg)
+        print('accuracy: ',accuracy)
+        precision = truePos / (truePos + falsePos)
+        print('precision: ',precision)
+        recall = truePos/(truePos + falseNeg)
+        print('recall: ',recall)
+        f1 = 2 * (precision * recall) / (precision + recall)
+        print('f1: ',f1)
+        
+    else:
+        correct = [1 if line[1] in result[line[0]] else 0 for line in ground_truth]
+        accuracy = sum(correct) / n_ground_truth
+
 
     print('top-{} accuracy: {}'.format(top_k, accuracy))
-    return accuracy
+    return accuracy, precision, recall, f1
 
 
 if __name__ == '__main__':
@@ -85,12 +116,39 @@ if __name__ == '__main__':
         action='store_true',
         help='ignore nonexistent videos in result')
 
+    parser.add_argument(
+        '--otherMeasures',action='store_true',
+        help='If it is included, besides accuracy it calculates precision, recall and f1 score from a 2 class result\
+        (first class as the main class for the purposes of these calculations)')
+    
     args = parser.parse_args()
 
-    accuracy = evaluate(args.ground_truth_path, args.result_path, args.subset,
-                        args.k, args.ignore)
+    if args.otherMeasures:
+
+        accuracy,precision,recall,f1 = evaluate(args.ground_truth_path, args.result_path, args.subset,
+                            args.k, args.ignore)    
+    
+    else:
+    
+        accuracy = evaluate(args.ground_truth_path, args.result_path, args.subset,
+                            args.k, args.ignore)
 
     if args.save:
-        with (args.result_path.parent / 'top{}.txt'.format(
-                args.k)).open('w') as f:
-            f.write(str(accuracy))
+
+        print('args.otherMeasures: ',args.otherMeasures)
+        print('args.otherMeasures is True: ',args.otherMeasures is True)
+        
+        if args.otherMeasures:
+
+            print('FLAGSAVE1')
+            with (args.result_path.parent / 'top{}.txt'.format(
+                    args.k)).open('w') as f:
+                f.write('accuracy,precision,recall,f1')
+                row = '{},{},{},{}'.format(accuracy,precision,recall,f1)
+                f.write(row)
+        else:
+
+            print('FLAGSAVE2')
+            with (args.result_path.parent / 'top{}.txt'.format(
+                    args.k)).open('w') as f:
+                f.write(str(accuracy))

@@ -7,10 +7,12 @@ import torch.utils.data as data
 from .loader import VideoLoader
 
 
+
 def get_class_labels(data):
     class_labels_map = {}
     index = 0
     for class_label in data['labels']:
+        print(class_label,'->',index)
         class_labels_map[class_label] = index
         index += 1
     return class_labels_map
@@ -83,13 +85,15 @@ class VideoDataset(data.Dataset):
             if 'label' in annotations[i]:
                 label = annotations[i]['label']
                 label_id = class_to_idx[label]
+                
             else:
                 label = 'test'
                 label_id = -1
 
             video_path = video_paths[i]
-            if not video_path.exists():
-                continue
+            #print(video_path,video_path.exists())
+            #if not video_path.exists():
+            #    continue
 
             segment = annotations[i]['segment']
             if segment[1] == 1:
@@ -103,6 +107,8 @@ class VideoDataset(data.Dataset):
                 'video_id': video_ids[i],
                 'label': label_id
             }
+
+            
             dataset.append(sample)
 
         return dataset, idx_to_class

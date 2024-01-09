@@ -42,6 +42,9 @@ def inference(data_loader, model, result_path, class_names, no_average,
             outputs = model(inputs)
             outputs = F.softmax(outputs, dim=1).cpu()
 
+            #print('video_ids: ',video_ids)
+            #print('outputs: ',outputs)
+            
             for j in range(outputs.size(0)):
                 results['results'][video_ids[j]].append({
                     'segment': segments[j],

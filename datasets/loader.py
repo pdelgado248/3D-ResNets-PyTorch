@@ -1,4 +1,5 @@
 import io
+import os
 
 import h5py
 from PIL import Image
@@ -32,9 +33,10 @@ class VideoLoader(object):
     def __call__(self, video_path, frame_indices):
         video = []
         for i in frame_indices:
-            image_path = video_path / self.image_name_formatter(i)
-            if image_path.exists():
-                video.append(self.image_loader(image_path))
+            imName = self.image_name_formatter(i)
+            image_path = video_path / imName
+            #if image_path.exists():
+            video.append(self.image_loader(image_path))
 
         return video
 

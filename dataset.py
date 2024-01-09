@@ -8,7 +8,7 @@ from datasets.loader import VideoLoader, VideoLoaderHDF5, VideoLoaderFlowHDF5
 
 
 def image_name_formatter(x):
-    return f'image_{x:05d}.jpg'
+    return f'im-{x:d}.jpg'
 
 
 def get_training_data(video_path,
@@ -20,7 +20,7 @@ def get_training_data(video_path,
                       temporal_transform=None,
                       target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mitoses'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -54,6 +54,7 @@ def get_training_data(video_path,
                                     video_loader=loader,
                                     video_path_formatter=video_path_formatter)
     else:
+        print('FLAG: ',video_path,annotation_path)
         training_data = VideoDataset(video_path,
                                      annotation_path,
                                      'training',
@@ -75,14 +76,14 @@ def get_validation_data(video_path,
                         temporal_transform=None,
                         target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit','mitoses'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
 
     if file_type == 'jpg':
         assert input_type == 'rgb', 'flow input is supported only when input type is hdf5.'
-
+        
         if get_image_backend() == 'accimage':
             from datasets.loader import ImageLoaderAccImage
             loader = VideoLoader(image_name_formatter, ImageLoaderAccImage())
@@ -132,7 +133,7 @@ def get_inference_data(video_path,
                        temporal_transform=None,
                        target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'mitoses'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
