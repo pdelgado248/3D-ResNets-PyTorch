@@ -115,6 +115,10 @@ class VideoDataset(data.Dataset):
 
     def __loading(self, path, frame_indices):
         clip = self.loader(path, frame_indices)
+
+        import numpy as np
+        print('Preliminary image 0: ',path)
+        print(np.asarray(clip[0]))
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()
             clip = [self.spatial_transform(img) for img in clip]
@@ -138,6 +142,23 @@ class VideoDataset(data.Dataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        if index == 0:
+            plt.figure()
+            plt.imshow(clip[0,0,:,:])
+            plt.title(path)
+            print(path)
+            print(clip[0,0,:,:])
+            plt.figure()
+            plt.imshow(clip[0,4,:,:])
+            print(clip[0,4,:,:])
+            plt.figure()
+            plt.imshow(clip[0,-1,:,:])
+            print(clip[0,-1,:,:])
+        
+        
         return clip, target
 
     def __len__(self):

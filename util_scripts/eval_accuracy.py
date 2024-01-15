@@ -77,10 +77,10 @@ def evaluate(ground_truth_path, result_path, subset, top_k, ignore):
         
         #[print('Ground truth: ',line[1],'\tResult: ',result[line[0]]) for line in ground_truth]
         #In our case 0 is abnormal, 1 is normal. Positive values are the abnormal and negative the normal.
-        truePos = sum([1 if (line[1] == 0) and (result[line[0]][0] == 0) else 0 for line in ground_truth])
-        trueNeg = sum([1 if (line[1] == 1) and (result[line[0]][0] == 1) else 0 for line in ground_truth])
-        falsePos = sum([1 if (line[1] == 0) and (result[line[0]][0] == 1) else 0 for line in ground_truth])
-        falseNeg = sum([1 if (line[1] == 1) and (result[line[0]][0] == 0) else 0 for line in ground_truth])
+        truePos = sum([1 if ((line[1] == 0) and (result[line[0]][0] == 0)) else 0 for line in ground_truth])
+        trueNeg = sum([1 if ((line[1] == 1) and (result[line[0]][0] == 1)) else 0 for line in ground_truth])
+        falsePos = sum([1 if ((line[1] == 1) and (result[line[0]][0] == 0)) else 0 for line in ground_truth])
+        falseNeg = sum([1 if ((line[1] == 0) and (result[line[0]][0] == 1)) else 0 for line in ground_truth])
         print('truePos: ',truePos)
         print('trueNeg: ',trueNeg)
         print('falsePos: ',falsePos)
@@ -143,7 +143,7 @@ if __name__ == '__main__':
             print('FLAGSAVE1')
             with (args.result_path.parent / 'top{}.txt'.format(
                     args.k)).open('w') as f:
-                f.write('accuracy,precision,recall,f1')
+                f.write('accuracy,precision,recall,f1\n')
                 row = '{},{},{},{}'.format(accuracy,precision,recall,f1)
                 f.write(row)
         else:

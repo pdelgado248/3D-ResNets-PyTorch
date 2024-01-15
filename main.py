@@ -85,7 +85,7 @@ def get_opt():
 
 def resume_model(resume_path, arch, model):
     print('loading checkpoint {} model'.format(resume_path))
-    checkpoint = torch.load(resume_path, map_location='cpu')
+    checkpoint = torch.load(resume_path, map_location = 'cpu')
     assert arch == checkpoint['arch']
 
     if hasattr(model, 'module'):
